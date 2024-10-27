@@ -25,8 +25,16 @@ class MarketAnalyzer:
             current_close = df["Close"].iloc[-1]
             current_volume = df["Volume"].iloc[-1]
 
+            # Calculate volatility
+            volatility = df["Close"].pct_change().std() * np.sqrt(252)
+
             # Obtain technical indicators
             analysis = self._calculate_technical_indicators(df)
+            sma_20 = analysis["SMA_20"].iloc[-1]
+            sma_50 = analysis["SMA_50"].iloc[-1]
+            rsi = analysis["RSI"].iloc[-1]
+            macd = analysis["MACD"].iloc[-1]
+            signal_line = analysis["Signal_Line"].iloc[-1]
 
             summary = {
                 "symbol": ticker,
@@ -34,7 +42,13 @@ class MarketAnalyzer:
                 "high": current_high,
                 "low": current_low,
                 "close": current_close,
-                "volume": current_volume
+                "volume": current_volume,
+                "volatility": volatility,
+                "sma_20": sma_20,
+                "sma_50": sma_50,
+                "rsi": rsi,
+                "macd": macd,
+                "signal_line": signal_line,
                 }
             
             # DEBUG
@@ -51,7 +65,7 @@ class MarketAnalyzer:
         # Copy dataframe to avoid modifications
         analysis = df.copy()
 
-        # Calculate simple moving average (SMA) (20, 50, 100 and 200 days)
+        # Calculate simple moving average (SMA)
         analysis["SMA_20"] = analysis["Close"].rolling(window=20).mean()
         analysis["SMA_50"] = analysis["Close"].rolling(window=50).mean()
         analysis["SMA_100"] = analysis["Close"].rolling(window=100).mean()
@@ -64,8 +78,35 @@ class MarketAnalyzer:
         rs = gain / loss
         analysis["RSI"] = 100 - (100 / (1 + rs))
 
-        print(analysis)
+        # Calulate moving average convergence divergence (MACD)
+        ema_12 = analysis["Close"].ewm(span=12, adjust=False).mean()
+        ema_26 = analysis["Close"].ewm(span=26, adjust=False).mean()
+        analysis["MACD"] = ema_12 - ema_26
+        analysis["Signal_Line"] = analysis["MACD"].ewm(span=9, adjust=False).mean()
 
-        
+        return analysis
+    
+    def _calculate_trend(self, analysis):
+        """
+        Calculate overall trend based on technical indicators
+        """
+        last_row = analysis.iloc[-1]
+
+        # Extract values for trend indicators
+        sma_20 = last_row["SMA_20"]
+        sma_50 = last_row["SMA_50"]
+        rsi = last_row["RSI"]
+        macd = last_row["MACD"]
+        signal_line = last_row["Signal_Line"]
+
+        # Trend determination
+        if macd > signal_line and rsi > 50 and sma_20 > sma_50:
+            return "bullish"
+        elif macd < signal_line and rsi < 50 and sma_20 < sma_50:
+            return "bearish"
+        return "neutral"
+
+
 analyzer = MarketAnalyzer()
 result = analyzer.fetch_equity_data("AAPL")
+print(result)  # Add this line to display the output
