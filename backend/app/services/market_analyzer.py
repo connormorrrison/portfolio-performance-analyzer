@@ -7,16 +7,13 @@ class MarketAnalyzer:
     def __init__(self):
         self.data = {}
     
-    def fetch_equity_data(self, ticker, period="1y"):
+    def fetch_equity_data(self, ticker: str, period: str = "1y"):
         """
         Fetch equity data
         """
         try:
             equity = yf.Ticker(ticker)
             df = equity.history(period=period)
-
-            # DEBUG
-            # print(df)
 
             # Obtain metrics
             current_open = df["Open"].iloc[-1]
@@ -32,10 +29,13 @@ class MarketAnalyzer:
             analysis = self._calculate_technical_indicators(df)
             sma_20 = analysis["SMA_20"].iloc[-1]
             sma_50 = analysis["SMA_50"].iloc[-1]
+            sma_100 = analysis["SMA_100"].iloc[-1]
+            sma_200 = analysis["SMA_200"].iloc[-1]
             rsi = analysis["RSI"].iloc[-1]
             macd = analysis["MACD"].iloc[-1]
             signal_line = analysis["Signal_Line"].iloc[-1]
 
+            # Dictionary containing metrics, volatility and technical indicators
             summary = {
                 "symbol": ticker,
                 "open": current_open,
@@ -46,17 +46,16 @@ class MarketAnalyzer:
                 "volatility": volatility,
                 "sma_20": sma_20,
                 "sma_50": sma_50,
+                "sma_100": sma_100,
+                "sma_200": sma_200,
                 "rsi": rsi,
                 "macd": macd,
                 "signal_line": signal_line,
-                }
+            }
             
-            # DEBUG
-            # print(summary)
-
             return summary
         except Exception as e:
-            return None, {"error": f"Error analyzing {ticker}: {str(e)}"}
+            return {"error": f"Error analyzing {ticker}: {str(e)}"}
         
     def _calculate_technical_indicators(self, df):
         """
@@ -99,14 +98,14 @@ class MarketAnalyzer:
         macd = last_row["MACD"]
         signal_line = last_row["Signal_Line"]
 
-        # Trend determination
+        # Calculate trend
         if macd > signal_line and rsi > 50 and sma_20 > sma_50:
             return "bullish"
         elif macd < signal_line and rsi < 50 and sma_20 < sma_50:
             return "bearish"
         return "neutral"
 
-
+# DEBUG
 analyzer = MarketAnalyzer()
 result = analyzer.fetch_equity_data("AAPL")
-print(result)  # Add this line to display the output
+print(result)
