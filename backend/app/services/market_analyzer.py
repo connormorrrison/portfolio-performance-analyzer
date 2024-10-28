@@ -8,9 +8,7 @@ class MarketAnalyzer:
         self.data = {}
     
     def fetch_equity_data(self, ticker: str, period: str = "1y"):
-        """
-        Fetch equity data
-        """
+        """Fetch equity data"""
         try:
             equity = yf.Ticker(ticker)
             df = equity.history(period=period)
@@ -26,41 +24,39 @@ class MarketAnalyzer:
             volatility = df["Close"].pct_change().std() * np.sqrt(252)
 
             # Obtain technical indicators
-            analysis = self._calculate_technical_indicators(df)
-            sma_20 = analysis["SMA_20"].iloc[-1]
-            sma_50 = analysis["SMA_50"].iloc[-1]
-            sma_100 = analysis["SMA_100"].iloc[-1]
-            sma_200 = analysis["SMA_200"].iloc[-1]
-            rsi = analysis["RSI"].iloc[-1]
-            macd = analysis["MACD"].iloc[-1]
-            signal_line = analysis["Signal_Line"].iloc[-1]
+            indicators = self._calculate_technical_indicators(df)
+            sma_20 = indicators["SMA_20"].iloc[-1]
+            sma_50 = indicators["SMA_50"].iloc[-1]
+            sma_100 = indicators["SMA_100"].iloc[-1]
+            sma_200 = indicators["SMA_200"].iloc[-1]
+            rsi = indicators["RSI"].iloc[-1]
+            macd = indicators["MACD"].iloc[-1]
+            signal_line = indicators["Signal_Line"].iloc[-1]
+            trend = self._calculate_trend(indicators)
 
             # Dictionary containing metrics, volatility and technical indicators
-            summary = {
+            return {
                 "symbol": ticker,
-                "open": current_open,
-                "high": current_high,
-                "low": current_low,
-                "close": current_close,
-                "volume": current_volume,
-                "volatility": volatility,
-                "sma_20": sma_20,
-                "sma_50": sma_50,
-                "sma_100": sma_100,
-                "sma_200": sma_200,
-                "rsi": rsi,
-                "macd": macd,
-                "signal_line": signal_line,
+                "open": float(current_open),
+                "high": float(current_high),
+                "low": float(current_low),
+                "close": float(current_close),
+                "volume": float(current_volume),
+                "volatility": float(volatility),
+                "sma_20": float(sma_20),
+                "sma_50": float(sma_50),
+                "sma_100": float(sma_100),
+                "sma_200": float(sma_200),
+                "rsi": float(rsi),
+                "macd": float(macd),
+                "signal_line": float(signal_line),
+                "trend": trend
             }
-            
-            return summary
         except Exception as e:
             return {"error": f"Error analyzing {ticker}: {str(e)}"}
         
     def _calculate_technical_indicators(self, df):
-        """
-        Calculate technical indicators
-        """
+        """Calculate technical indicators"""
         # Copy dataframe to avoid modifications
         analysis = df.copy()
 
@@ -85,11 +81,9 @@ class MarketAnalyzer:
 
         return analysis
     
-    def _calculate_trend(self, analysis):
-        """
-        Calculate overall trend based on technical indicators
-        """
-        last_row = analysis.iloc[-1]
+    def _calculate_trend(self, indicators):
+        """Calculate overall trend based on technical indicators"""
+        last_row = indicators.iloc[-1]
 
         # Extract values for trend indicators
         sma_20 = last_row["SMA_20"]
@@ -104,8 +98,4 @@ class MarketAnalyzer:
         elif macd < signal_line and rsi < 50 and sma_20 < sma_50:
             return "bearish"
         return "neutral"
-
-# DEBUG
-analyzer = MarketAnalyzer()
-result = analyzer.fetch_equity_data("AAPL")
-print(result)
+    
