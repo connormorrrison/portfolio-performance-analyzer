@@ -1,6 +1,30 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
-export const Card = ({ children }) => <div className="card">{children}</div>;
-export const CardHeader = ({ children }) => <div className="class-header">{children}</div>
-export const CardTitle = ({ children }) => <h2 className="card-title">{children}</h2>
-export const CardContent = ({ children }) => <div className="card-content">{children}</div>
+interface CardProps {
+    children: ReactNode;
+    className?: string;  // Allow className prop
+}
+
+export const Card: React.FC<CardProps> = ({ children, className = "", ...props }) => (
+    <div className={`card ${className}`} {...props}>
+        {children}
+    </div>
+);
+
+export const CardHeader: React.FC<CardProps> = ({ children, className = "", ...props }) => (
+    <div className={`card-header ${className}`} {...props}>
+        {children}
+    </div>
+);
+
+export const CardTitle: React.FC<CardProps> = ({ children, className = "", ...props }) => (
+    <h2 className={`card-title ${className}`} {...props}>
+        {children}
+    </h2>
+);
+
+export const CardContent: React.FC<CardProps> = ({ children, className = "", ...props }) => (
+    <div className={`card-content ${className}`} {...props}>
+        {children}
+    </div>
+);
