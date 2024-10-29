@@ -1,17 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "ESNext",
-    "jsx": "preserve",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./*"
-      ]
-    },
-    "moduleResolution": "Node",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
+    "target": "ES2017",
     "lib": [
       "dom",
       "dom.iterable",
@@ -22,8 +11,12 @@
     "strict": false,
     "noEmit": true,
     "incremental": true,
+    "module": "esnext",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "jsx": "preserve",
     "plugins": [
       {
         "name": "next"
