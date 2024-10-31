@@ -47,4 +47,52 @@ export function PortfolioPerformanceAnalyzer() {
         valueAtRisk: 0.15
     };
 
+    const addStock = () => {
+        if (newStock && newShares) {
+            // Calculate total weight of the portfolio
+            let totalCurrentWeight = 0;
+            for (const h of holdings) {
+                totalCurrentWeight += h.weight;
+            }
+
+            // Calculate the new weight for the added stock
+            const newWeight = 1 - totalCurrentWeight;
+
+            if (newWeight > 0) {
+                setHoldings([
+                    ...holdings,
+                    {
+                        symbol: newStock.toUpperCase(),
+                        shares: parseInt(newShares),
+                        weight: newWeight
+                    }
+                ]);
+                setNewStock("");
+                setNewShares("");
+            }
+        }
+    };
+
+    const removeStock = (symbolToRemove: string) => {
+        const updatedHoldings = [];
+        let totalWeight = 0;
+
+        // Create updatedHoldings array
+        for (const h of holdings) {
+            if (h.symbol != symbolToRemove) {
+                updatedHoldings.push({...h});
+                totalWeight += h.weight;
+            }
+        }
+
+        // Normalize weights
+        if (totalWeight > 0) {
+            for (const h of holdings) {
+                h.weight = h.weight / totalWeight;
+            }
+        }
+
+        setHoldings(updatedHoldings);
+    };
+
 }
