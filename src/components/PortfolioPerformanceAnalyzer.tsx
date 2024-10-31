@@ -30,4 +30,21 @@ export function PortfolioPerformanceAnalyzer() {
         "BRK.B": { rsi: 52, macd: 0.1, signal: 0.2, trend: "neutral" }
     };
 
+    const performanceData: PerformanceData[] = [
+        { date: "2024-01", value: 100, benchmark: 100 },
+        { date: "2024-02", value: 105, benchmark: 103 },
+        { date: "2024-03", value: 103, benchmark: 102 },
+        { date: "2024-04", value: 108, benchmark: 105 },
+        { date: "2024-05", value: 112, benchmark: 107 },
+        { date: "2024-06", value: 110, benchmark: 106 },
+        { date: "2024-07", value: 115, benchmark: 108 }
+    ];
+
+    const riskMetrics: RiskMetrics = {
+        beta: 1.15,
+        volatility: 0.22,
+        sharpeRatio: 2.11,
+        valueAtRisk: 0.15
+    };
+
 }
