@@ -6,7 +6,7 @@ export interface Holding {
     shares: number;
 }
 
-export interface TechnicalSignal {
+export interface TechnicalIndicators {
     rsi: number;
     macd: number;
     signal: number;
