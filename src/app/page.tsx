@@ -4,7 +4,7 @@ import { PortfolioPerformanceAnalyzer } from '@/components/PortfolioPerformanceA
 
 export default function Home() {
   return (
-    <main className="min-h-screen p-4">
+    <main className="min-h-screen p-8">
       <PortfolioPerformanceAnalyzer />
     </main>
   );

@@ -41,10 +41,10 @@ export function PortfolioPerformanceAnalyzer() {
     ];
 
     const riskMetrics: RiskMetrics = {
-        beta: 1.15,
-        volatility: 0.22,
-        sharpeRatio: 2.11,
-        valueAtRisk: 0.15
+        beta: 1.1578,
+        volatility: 0.2227,
+        sharpeRatio: 2.1162,
+        valueAtRisk: 0.1576
     };
 
     const addStock = () => {
@@ -95,4 +95,101 @@ export function PortfolioPerformanceAnalyzer() {
         setHoldings(updatedHoldings);
     };
 
+    return(
+        <div className="w-full max-w-6xl mx-auto space-y-6">
+            <h1 className="text-3xl font-bold">Portfolio Dashboard</h1>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Portfolio Management</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex gap-4 mb-4">
+                        <Input 
+                            placeholder="Stock Symbol (e.g., AAPL)"
+                            value={newStock}
+                            onChange={(e) => setNewStock(e.target.value)}
+                            className="w-48"
+                        />
+                        <Input
+                            placeholder="Number of Shares"
+                            type="number"
+                            value={newShares}
+                            onChange={(e) => setNewShares(e.target.value)}
+                            className="w-48"
+                        />
+                        <Button onClick={addStock} className="flex items-center gap-2">
+                            <Plus className="w-4 h-4" /> Add Stock
+                        </Button>
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                        Current Portfolio: {holdings.map(h => h.symbol).join(", ")}
+                    </div>
+                </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1: md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">Portfolio Beta</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{riskMetrics.beta.toFixed(2)}</div>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">Volatility</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">
+                            {(riskMetrics.volatility * 100).toFixed(2)}%
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">Sharpe Ratio</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{riskMetrics.sharpeRatio.toFixed(2)}</div>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">Value at Risk (95%)</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">
+                            {(riskMetrics.valueAtRisk * 100).toFixed(2)}
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Portfolio Performance vs Benchmark</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="h-[400px]">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={performanceData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="date" />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                <Line type="monotone" dataKey="value" name="Portfolio" stroke="#8884d8" />
+                                <Line type="monotone" dataKey="benchmark" name="Benchmark" stroke="82ca9d" />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    );
 }
